@@ -1,22 +1,10 @@
 import React, { Component } from 'react';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
-import styled from 'styled-components';
 import { nanoid } from 'nanoid';
 import ContactForm from './ContactForm';
 import ContactList from './ContactList';
 import Filter from './Filter';
-
-const ContainerStyled = styled.div`
-  margin-left: 20px;
-`;
-
-const MainTitle = styled.h1`
-  text-transform: uppercase;
-`;
-
-const Title = styled.h2`
-  text-transform: uppercase;
-`;
+import { ContainerStyled, MainTitle, Title } from './MainStyles';
 
 class App extends Component {
   state = {
@@ -68,6 +56,23 @@ class App extends Component {
       contacts: prevState.contacts.filter(contact => contact.name !== name),
     }));
   };
+
+  componentDidMount() {
+    const contacts = localStorage.getItem('contacts');
+    const parsedContacts = JSON.parse(contacts);
+
+    if (parsedContacts) {
+      this.setState({
+        contacts: parsedContacts,
+      });
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.contacts !== this.state.contacts) {
+      localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
+    }
+  }
 
   render() {
     const visibleContacts = this.getVisibleContacts();
